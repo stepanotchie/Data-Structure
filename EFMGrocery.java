@@ -28,6 +28,7 @@ public class EFMGrocery {
                 dTotal = dQty * dPrice;
                 dBill = dBill + dTotal;
 
+                // Append this item to our receipt string
                 receiptItems.append(String.format("%-22s %.2f x %.0f\n", strProdName, dPrice, dQty));
 
                 System.out.print("Another product Y/N: ");
