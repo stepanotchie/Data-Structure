@@ -8,43 +8,38 @@ public class Products {
         int iprodId = 0;
         String strprodName = "";
         String strProdDesc = "";
-        double dQty = 0;
+        int iQty = 0;
         double dPrice = 0;
         double dDiscount = 0;
 
         System.out.println("Please input the following: ");
 
-        // We pass the current value and capture the NEW value returned by the method
-        iprodId = inputInt(iprodId);
-        
+        // pass the current value and capture the NEW value returned by the method
+        iprodId = inputIntId(iprodId);
+
         // Clearing the buffer after a number input before reading a String
-        sc.nextLine(); 
-        
+        sc.nextLine();
+
         strprodName = inputName(strprodName);
         strProdDesc = inputDesc(strProdDesc);
-        
-        dQty = inputQty(dQty);
+
+        iQty = inputQty(iQty);
         dPrice = inputPrice(dPrice);
         dDiscount = inputDiscount(dDiscount);
 
-        System.out.println("\n--- PRODUCT SUMMARY ---");
         System.out.printf("""
-                ID:          %d 
-                Name:        %s
-                Description: %s
-                Price:       %.2f 
-                Quantity:    %.2f
-                Discount:    %.2f
-                -----------------------
-                Subtotal:    %.2f
-                """, 
-                iprodId, strprodName, strProdDesc, 
-                dPrice, dQty, dDiscount, 
-                calculateSubTotal(dPrice, dQty, dDiscount)); 
+                \n%d %s
+                Priced at %.2f for %d pieces
+                Discounted at %.2f
+                Subtotal: %.2f
+                """, iprodId, strprodName, dPrice, iQty, dDiscount, SubTotal(dPrice, iQty, dDiscount));
+
+        System.out.println(printFinalReceipt(iprodId, strprodName, strProdDesc, dPrice, iQty, dDiscount));
     }
 
     // Each method takes a parameter and returns the updated value
-    public static int inputInt(int id) {
+    public static int inputIntId(int id) { // the inputted value will be stored in the parameter same as the other
+                                           // methods
         System.out.print("Product ID: ");
         id = sc.nextInt();
         return id;
@@ -62,9 +57,9 @@ public class Products {
         return desc;
     }
 
-    public static double inputQty(double qty) {
+    public static int inputQty(int qty) {
         System.out.print("Quantity: ");
-        qty = sc.nextDouble();
+        qty = sc.nextInt();
         return qty;
     }
 
@@ -80,19 +75,26 @@ public class Products {
         return discount;
     }
 
-    public static double calculateSubTotal(double price, double qty, double discount) {
+    public static double SubTotal(double price, double qty, double discount) {
         return (price * qty) - discount;
     }
-}
 
+    public static String printFinalReceipt(int id, String name, String desc, double price, int qty, double discount) {
+        System.out.println("\n--- PRODUCT SUMMARY ---");
+        String receipt = String.format("""
+                ID:          %d
+                Name:        %s
+                Description: %s
+                Price:       %.2f
+                Quantity:    %d
+                Discount:    %.2f
+                -----------------------
+                Subtotal:    %.2f
+                """,
+                id, name, desc,
+                price, qty, discount,
+                SubTotal(price, qty, discount));
 
-/*
-System.out.printf("""
-                %d %s
-                Priced at %.2f for %.2f
-                Discounted at %.2f
-                Subtotal: %.2f
-                """, iprodId, strprodName, dPrice, dQty, dDiscount, SubTotal(dPrice, dQty, dDiscount)); 
-        
+        return receipt;
     }
- */
+}
