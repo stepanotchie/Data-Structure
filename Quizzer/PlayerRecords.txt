@@ -1,0 +1,6 @@
+
+--- GAME SESSION ---
+Name: Stephanie
+Password: 12345
+Score: 0/0
+----------------------------------
