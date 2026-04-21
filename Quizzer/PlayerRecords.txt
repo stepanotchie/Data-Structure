@@ -2,5 +2,10 @@
 --- GAME SESSION ---
 Name: Geoff
 Password: 54321
-Score: 17/30
+Score: 20/30
+----------------------------------
+--- PLAYER RECORD ---
+Name: Stephanie
+Password: 12345
+Score: 30/30
 ----------------------------------
