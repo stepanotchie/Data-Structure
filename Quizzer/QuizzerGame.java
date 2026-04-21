@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// TO BE FIX : saving to txt (must not overwrite existing data), all questions must be answered, if there are skipped ones then allow the user to go back and answer first and don't allow the program to end go back to menu
 public class QuizzerGame {
 
     static Scanner sc = new Scanner(System.in);
@@ -110,100 +111,63 @@ public class QuizzerGame {
 
     public static void playGame() {
         while (index >= 0 && index < quizList.size()) {
-            // Print the question and options
             Question q = quizList.get(index);
-
             System.out.println("\nQuestion " + (index + 1) + ". " + q.promptQuestions);
             for (String opt : q.options) {
                 System.out.println(opt);
             }
 
-            String subMenu_1 = """
-                    ┌──────────────────────────────────────┐
-                    │           TRIVIA MACHINE             │
-                    ├──────────────────────────────────────┤
-                    │        [2] Next Question             │
-                    │        [3] Previous Question         │
-                    └──────────────────────────────────────┘
-                    """;
+            // 1. Display Menu and get selection
+            int choice = getSubMenuChoice(q.isAnswered);
 
-            String subMenu = """
-                    ┌──────────────────────────────────────┐
-                    │           TRIVIA MACHINE             │
-                    ├──────────────────────────────────────┤
-                    │        [1] Answer                    │
-                    │        [2] Next Question             │
-                    │        [3] Previous Question         │
-                    └──────────────────────────────────────┘""";
-
+            // 2. Handle Logic
             if (q.isAnswered) {
-                System.out.println("[!] You have already answered this question!");
-                System.out.println(isCorrect[index] == true ? "Correct" : "Wrong");
-                System.out.println(subMenu_1);
-                InputValidator<Integer> subMenuValidator_1 = new InputValidator<>();
-                int choice = subMenuValidator_1.getValidInput(
-                        "Selection ",
-                        Integer::parseInt,
-                        i -> i >= 2 && i <= 3);
-                switch (choice) {
-                    case 2:
-                        // Move forward if not at the last question
-                        if (index < quizList.size() - 1) {
-                            index++;
-                        } else  {
-                            System.out.println("\n[!] This is the last question.");
-                            return;
-                        }
-                        break;
-
-                    case 3:
-                        // Move backward if not at the first question
-                        if (index > 0) {
-                            index--;
-                        } else {
-                            System.out.println("\n[!] You are already at the first question.");
-                        }
-                        break;
-
-                }
-                System.out.println("Final Score: " + score + "/30");
+                handleAnsweredNavigation(choice);
             } else {
-                System.out.println(subMenu);
-                InputValidator<Integer> subMenuValidator = new InputValidator<>();
-                int choice = subMenuValidator.getValidInput(
-                        "Selection ",
-                        Integer::parseInt,
-                        i -> i >= 1 && i <= 3);
-                switch (choice) {
-                    case 1:
-                        if (answerQuestion(q)) {
-                            score++;
-                        }
-                        q.isAnswered = true; // Mark so it can't be answered again
-                        index++;
-                        break;
-                    case 2:
-                        // Move forward if not at the last question
-                        if (index < quizList.size() - 1) {
-                            index++;
-                        } else {
-                            System.out.println("\n[!] This is the last question.");
-                            index = quizList.size(); // breaks the while loop
-                        }
-                        break;
-
-                    case 3:
-                        // Move backward if not at the first question
-                        if (index > 0) {
-                            index--;
-                        } else {
-                            System.out.println("\n[!] You are already at the first question.");
-                        }
-                        break;
-
-                }
-                System.out.println("Final Score: " + score + "/30");
+                handleUnansweredSelection(choice, q);
             }
+
+            System.out.println("Final Score: " + score + "/30");
+        }
+    }
+
+    private static int getSubMenuChoice(boolean isAnswered) {
+        System.out.println(isAnswered ? "\n[!] Already answered." : "");
+        String menu = isAnswered
+                ? "| [2] Next | [3] Previous |" : "| [1] Answer | [2] Next | [3] Previous |";
+        System.out.println(menu);
+
+        return new InputValidator<Integer>().getValidInput("Selection ", Integer::parseInt,
+                i -> i
+                >= (isAnswered ? 2 : 1) && i <= 3);
+    }
+
+    private static void handleAnsweredNavigation(int choice) {
+        if (choice == 2) {
+            if (index < quizList.size() - 1) {
+                index++;
+            } else {
+                System.out.println("\n[!] This is the last question.");
+            }
+        } else if (choice == 3) {
+            if (index > 0) {
+                index--;
+            } else {
+                System.out.println("\n[!] You are already at the first question.");
+            }
+        }
+    }
+
+    private static void handleUnansweredSelection(int choice, Question q) {
+        if (choice == 1) {
+            if (answerQuestion(q)) {
+                score++;
+            }
+            q.isAnswered = true;
+            index++;
+            savePlayerLocally(playerName, playerPassword, score, 30);
+        } else {
+            handleAnsweredNavigation(choice);
         }
     }
 
@@ -215,7 +179,7 @@ public class QuizzerGame {
                 input -> {
                     // Parser: protect against empty input
                     String s = input.trim().toLowerCase();
-                    return s.isEmpty() ? ' ' : s.charAt(0);
+                    return (s.length() == 1) ? s.charAt(0) : ' ';
                 },
                 val -> val >= 'a' && val <= 'd' // Predicate: Rule for valid input
         );
@@ -285,7 +249,7 @@ public class QuizzerGame {
     }
 
     public static void savePlayerLocally(String name, String password, int score, int total) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PlayerRecords.txt", true))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PlayerRecords.txt"))) {
             bw.newLine();
             bw.write("--- GAME SESSION ---");
             bw.newLine();

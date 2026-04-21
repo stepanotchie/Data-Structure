@@ -1,6 +1,6 @@
 
 --- GAME SESSION ---
-Name: Stephanie
-Password: 12345
-Score: 0/0
+Name: Geoff
+Password: 54321
+Score: 17/30
 ----------------------------------
