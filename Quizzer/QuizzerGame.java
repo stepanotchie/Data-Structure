@@ -165,7 +165,6 @@ public class QuizzerGame {
             }
             q.isAnswered = true;
             index++;
-            savePlayerLocally(playerName, playerPassword, score, 30);
         } else {
             handleAnsweredNavigation(choice);
         }
@@ -249,7 +248,7 @@ public class QuizzerGame {
     }
 
     public static void savePlayerLocally(String name, String password, int score, int total) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PlayerRecords.txt"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PlayerRecords.txt", true))) {
             bw.newLine();
             bw.write("--- GAME SESSION ---");
             bw.newLine();

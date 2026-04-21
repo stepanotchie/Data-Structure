@@ -99,4 +99,39 @@ public class Draft {
         }
     }
      */
+
+
+     /* public static void playGame() {
+    boolean inGame = true;
+    while (inGame) {
+        Question q = quizList.get(index);
+        System.out.println("\nQuestion " + (index + 1) + ". " + q.promptQuestions);
+        for (String opt : q.options) System.out.println(opt);
+
+        // Check completion status
+        boolean allAnswered = quizList.stream().allMatch(qu -> qu.isAnswered);
+
+        // Submenu: Added option 4 to Finish/Exit
+        System.out.println(q.isAnswered ? "\n[!] Already answered." : "");
+        System.out.println("| [1] Answer | [2] Next | [3] Previous |" + (allAnswered ? " [4] Finish & Save |" : " [4] Exit to Menu |"));
+        
+        int choice = new InputValidator<Integer>().getValidInput("Selection ", Integer::parseInt, i -> i >= 1 && i <= 4);
+
+        if (choice == 1 && !q.isAnswered) {
+            if (answerQuestion(q)) score++;
+            q.isAnswered = true;
+        } else if (choice == 4) {
+            if (allAnswered) {
+                savePlayerLocally(playerName, playerPassword, score, quizList.size());
+                System.out.println("Quiz finished! Results saved.");
+                inGame = false;
+            } else {
+                System.out.println("[!] Please answer all questions before finishing.");
+            }
+        } else {
+            handleNavigation(choice);
+        }
+    }
+}
+      */
 }
